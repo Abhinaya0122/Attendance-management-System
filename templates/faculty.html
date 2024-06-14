@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="icon" href="static/favicon.ico" type="image/x-icon">
+  <title>Class and Period Selection</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      align-items: center;
+      background-image: url('static/images.jpg');
+    }
+
+    .dropdown-container {
+      background-color: white;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      padding: 15px;
+      display: flex;
+      justify-content: space-between;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      margin-top: 20px;
+      width: 90%;
+      max-width: 600px;
+    }
+
+    .dropdown {
+      display: inline-block;
+      margin: 0 10px;
+    }
+
+    .dropdown label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+
+    select, input[type="date"] {
+      padding: 5px 10px;
+      border: 1px solid #ccc;
+      border-radius: 3px;
+      font-size: 16px;
+      outline: none;
+    }
+
+    select:focus, input[type="date"]:focus {
+      border-color: #999;
+    }
+
+    table {
+      border-collapse: collapse;
+      width: 80%;
+      margin-top: 30px;
+    }
+
+    th, td {
+      border: 2px solid #333;
+      padding: 8px;
+      text-align: left;
+      box-shadow: #999;
+    }
+    
+    #get-students-btn {
+      padding: 5px 10px;
+      border: 1px solid #ccc;
+      border-radius: 3px;
+      background-color: #6bbbf5;
+      cursor: pointer;
+      color: #000000;
+    }
+
+    #student-table-container {
+      display: flex;
+      justify-content: center;
+      width: 100%;
+    }
+
+    .status-radio {
+      margin-left: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="dropdown-container">
+    <div class="dropdown">
+      <label for="class-select">Class:</label>
+      <select id="class-select">
+        <option value="">Select Class</option>
+        <option value="A">CSE A</option>
+        <option value="B">CSE B</option>
+        <option value="C">CSE C</option>
+        <option value="D">CSE D</option>
+      </select>
+    </div>
+    <div class="dropdown">
+      <label for="period-select">Period:</label>
+      <select id="period-select">
+        <option value="">Select Period</option>
+        <option value="1">Period 1</option>
+        <option value="2">Period 2</option>
+        <option value="3">Period 3</option>
+        <option value="4">Period 4</option>
+        <option value="5">Period 5</option>
+        <option value="6">Period 6</option>
+        <option value="7">Period 7</option>
+        <option value="8">Period 8</option>
+      </select>
+    </div>
+    <div class="dropdown">
+      <label for="date-select">Date:</label>
+      <input type="date" id="date-select">
+    </div>
+    <button id="get-students-btn">Get Students</button>
+  </div>
+
+  <div id="student-table-container" class="table table-bordered table-hover table-striped'"></div>
+
+  <script>
+    const classSelect = document.getElementById('class-select');
+const periodSelect = document.getElementById('period-select');
+const dateSelect = document.getElementById('date-select');
+const getStudentsBtn = document.getElementById('get-students-btn');
+const studentTableContainer = document.getElementById('student-table-container');
+
+getStudentsBtn.addEventListener('click', () => {
+  const selectedClass = classSelect.value;
+  const selectedPeriod = periodSelect.value;
+  const selectedDate = dateSelect.value;
+
+  fetch('/get_students', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ class: selectedClass, period: selectedPeriod, date: selectedDate })
+  })
+  .then(response => response.json())
+  .then(studentData => {
+    // Clear any existing table content
+    studentTableContainer.innerHTML = '';
+
+    if (studentData.length > 0) {
+      // Create the table header
+      const table = document.createElement('table');
+      const thead = document.createElement('thead');
+      const tr = document.createElement('tr');
+      let th = document.createElement('th');
+      th.textContent = 'Name';
+      tr.appendChild(th);
+      th = document.createElement('th');
+      th.textContent = 'Roll Number';
+      tr.appendChild(th);
+      th = document.createElement('th');
+      th.textContent = 'Status';
+      tr.appendChild(th);
+      thead.appendChild(tr);
+      table.appendChild(thead);
+
+      // Create table body rows
+      const tbody = document.createElement('tbody');
+      for (const student of studentData) {
+        const tr = document.createElement('tr');
+        const td = document.createElement('td');
+        td.textContent = student.name;
+        tr.appendChild(td);
+        const td2 = document.createElement('td');
+        td2.textContent = student.rollno;
+        tr.appendChild(td2);
+        const td3 = document.createElement('td');
+        const statusLabel = document.createElement('label');
+        statusLabel.textContent = 'A'; // Default status is 'A' (Absent)
+        const statusRadio = document.createElement('input');
+        statusRadio.type = 'radio';
+        statusRadio.className = 'status-radio';
+        statusRadio.addEventListener('change', () => {
+          statusLabel.textContent = statusRadio.checked ? 'P' : 'A'; // Use 'P' for Present
+          updateAttendance(student.rollno, selectedPeriod, selectedDate, statusRadio.checked ? 'P' : 'A',selectedClass);
+        });
+        td3.appendChild(statusLabel);
+        td3.appendChild(statusRadio);
+        tr.appendChild(td3);
+        tbody.appendChild(tr);
+      }
+      table.appendChild(tbody);
+
+      // Append the table to the container
+      studentTableContainer.appendChild(table);
+    } else {
+      // Display a message if no students are found
+      studentTableContainer.textContent = 'No students found for the selected class, period, and date.';
+    }
+  });
+});
+
+function updateAttendance(rollno, period, date, status,selectedClass) {
+  fetch('/update_attendance', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ rollno, period, date, status,selectedClass})
+  })
+  .then(response => response.json())
+  .then(result => {
+    if (result.success) {
+      console.log('Attendance updated successfully');
+    } else {
+      console.log('Failed to update attendance');
+    }
+  });
+}
+
+  </script>
+</body>
+</html>
+
+
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Class and Period Selection</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      height: 100vh;
+      background: linear-gradient(to bottom, #f0f8ff 0%, #f9c969 50%, #bcbdce 100%);
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      align-items: center;
+    }
+
+    .dropdown-container {
+      background-color: white;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      padding: 15px;
+      display: flex;
+      justify-content: space-between;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      margin-top: 20px;
+      width: 90%;
+      max-width: 600px;
+    }
+
+    .dropdown {
+      display: inline-block;
+      margin: 0 10px;
+    }
+
+    .dropdown label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+
+    select, input[type="date"] {
+      padding: 5px 10px;
+      border: 1px solid #ccc;
+      border-radius: 3px;
+      font-size: 16px;
+      outline: none;
+    }
+
+    select:focus, input[type="date"]:focus {
+      border-color: #999;
+    }
+
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      margin-top: 20px;
+    }
+
+    th, td {
+      border: 1px solid #333;
+      padding: 8px;
+      text-align: left;
+    }
+    
+    #get-students-btn {
+      padding: 5px 10px;
+      border: 1px solid #ccc;
+      border-radius: 3px;
+      background-color: #f9c969;
+      cursor: pointer;
+      color: #000000;
+    }
+
+    #student-table-container {
+      display: flex;
+      justify-content: center;
+      width: 100%;
+    }
+
+    .status-checkbox {
+      margin-left: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="dropdown-container">
+    <div class="dropdown">
+      <label for="class-select">Class:</label>
+      <select id="class-select">
+        <option value="">Select Class</option>
+        <option value="A">CSE A</option>
+        <option value="B">CSE B</option>
+        <option value="C">CSE C</option>
+        <option value="D">CSE D</option>
+      </select>
+    </div>
+    <div class="dropdown">
+      <label for="period-select">Period:</label>
+      <select id="period-select">
+        <option value="">Select Period</option>
+        <option value="1">Period 1</option>
+        <option value="2">Period 2</option>
+        <option value="3">Period 3</option>
+        <option value="4">Period 4</option>
+        <option value="5">Period 5</option>
+        <option value="6">Period 6</option>
+        <option value="7">Period 7</option>
+        <option value="8">Period 8</option>
+      </select>
+    </div>
+    <div class="dropdown">
+      <label for="date-select">Date:</label>
+      <input type="date" id="date-select">
+    </div>
+    <button id="get-students-btn">Get Students</button>
+  </div>
+
+  <div id="student-table-container"></div>
+
+  <script>
+    const classSelect = document.getElementById('class-select');
+    const periodSelect = document.getElementById('period-select');
+    const dateSelect = document.getElementById('date-select');
+    const getStudentsBtn = document.getElementById('get-students-btn');
+    const studentTableContainer = document.getElementById('student-table-container');
+
+    getStudentsBtn.addEventListener('click', () => {
+      const selectedClass = classSelect.value;
+      const selectedPeriod = periodSelect.value;
+      const selectedDate = dateSelect.value;
+
+      fetch('/get_students', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ class: selectedClass })
+      })
+      .then(response => response.json())
+      .then(studentData => {
+        studentTableContainer.innerHTML = '';
+
+        if (studentData.length > 0) {
+          const table = document.createElement('table');
+          const thead = document.createElement('thead');
+          const tr = document.createElement('tr');
+          ['Name', 'Roll Number', 'Status'].forEach(text => {
+            const th = document.createElement('th');
+            th.textContent = text;
+            tr.appendChild(th);
+          });
+          thead.appendChild(tr);
+          table.appendChild(thead);
+
+          const tbody = document.createElement('tbody');
+          studentData.forEach(student => {
+            const tr = document.createElement('tr');
+            ['name', 'rollno'].forEach(key => {
+              const td = document.createElement('td');
+              td.textContent = student[key];
+              tr.appendChild(td);
+            });
+
+            const td = document.createElement('td');
+            const statusCheckbox = document.createElement('input');
+            statusCheckbox.type = 'checkbox';
+            statusCheckbox.className = 'status-checkbox';
+            statusCheckbox.addEventListener('change', () => {
+              const status = statusCheckbox.checked ? 'P' : 'A';
+              updateAttendance(student.rollno, selectedPeriod, selectedDate, status,selectedClass);
+            });
+            td.appendChild(statusCheckbox);
+            tr.appendChild(td);
+
+            tbody.appendChild(tr);
+          });
+          table.appendChild(tbody);
+          studentTableContainer.appendChild(table);
+        } else {
+          studentTableContainer.textContent = 'No students found for the selected class, period, and date.';
+        }
+      });
+    });
+
+    function updateAttendance(rollno, period, date, status,classSelect) {
+      fetch('/update_attendance', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ rollno, period, date, status,classSelect })
+      })
+      .then(response => response.json())
+      .then(result => {
+        if (result.success) {
+          console.log('Attendance updated successfully');
+        } else {
+          console.log('Failed to update attendance');
+        }
+      });
+    }
+  </script>
+</body>
+</html>
+ -->

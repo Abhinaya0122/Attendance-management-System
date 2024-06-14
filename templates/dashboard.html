@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Faculty Dashboard</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="icon" href="static/favicon.ico" type="image/x-icon">
+    <style>
+        body {
+            padding-top: 10%;
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
+            background-image: url('static/images.jpg');
+        }
+        .container {
+            margin-top: 50px;
+        }
+        .card {
+            margin-bottom: 20px;
+            box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+            transition: 0.3s;
+        }
+        .card:hover {
+            box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
+        }
+        .card-header {
+            background-color: hsla(0, 0%, 0%, 0.578);
+            color: white;
+            padding: 10px;
+        }
+        .card-body {
+            padding: 20px;
+
+        }
+        .card-title {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+        .btn-primary {
+            background-color: hsla(0, 0%, 0%, 0.464);
+            border: none;
+        }
+        .btn-primary:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    Take Attendance
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title">Take Attendance</h5>
+                    <p class="card-text">Click the button below to take attendance for your class.</p>
+                    <a href="/take_attendance" class="btn btn-primary">Take Attendance</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    View Attendance
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title">View Attendance</h5>
+                    <p class="card-text">Click the button below to view attendance records.</p>
+                    <a href="/view" class="btn btn-primary">View Attendance</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

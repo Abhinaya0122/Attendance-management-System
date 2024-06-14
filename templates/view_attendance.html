@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Attendance</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="icon" href="static/favicon.ico" type="image/x-icon">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
+        }
+        .container {
+            margin-top: 50px;
+        }
+        .card {
+            box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+            transition: 0.3s;
+        }
+        .card-header {
+            background-color: #007bff;
+            color: white;
+            padding: 10px;
+        }
+        .card-body {
+            padding: 20px;
+        }
+        .table {
+            margin-bottom: 0; /* Remove default bottom margin */
+        }
+        .table th,
+        .table td {
+            vertical-align: middle;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="card">
+        <div class="card-header">
+            View Attendance
+        </div>
+        <div class="card-body">
+            <form action="/view_attendance" method="post">
+                <div class="form-group">
+                    <label for="classSelect">Select Class:</label>
+                    <select class="form-control" id="classSelect" name="class">
+                        <option value="A">Class A</option>
+                        <option value="B">Class B</option>
+                        <option value="C">Class C</option>
+                        <option value="D">Class D</option>
+                        
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary">View Attendance</button>
+            </form>
+            <br>
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Roll No</th>
+                        <th>Name</th>
+                        <th>Date</th>
+                        <th>Period 1</th>
+                        <th>Period 2</th>
+                        <th>Period 3</th>
+                        <th>Period 4</th>
+                        <th>Period 5</th>
+                        <th>Period 6</th>
+                        <th>Period 7</th>
+                        <th>Period 8</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for record in attendance_records %}
+                    <tr>
+                        <td>{{ record.rollno }}</td>
+                        <td>{{ record.name }}</td>
+                        <td>{{ record.date }}</td>
+                        <td>{{ record.p1 }}</td>
+                        <td>{{ record.p2 }}</td>
+                        <td>{{ record.p3 }}</td>
+                        <td>{{ record.p4 }}</td>
+                        <td>{{ record.p5 }}</td>
+                        <td>{{ record.p6 }}</td>
+                        <td>{{ record.p7 }}</td>
+                        <td>{{ record.p8 }}</td>
+
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- jQuery and Bootstrap JS -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Attendance</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="icon" href="static/favicon.ico" type="image/x-icon">
+</head>
+<body class="bg-gradient">
+    <div class="container py-5">
+        <h1 class="text-center mb-5 text-4xl font-bold text-orange" style="color:orangered; font-family: 'sans-serif';">Attendance</h1>
+        <table class="table table-bordered table-hover table-striped">
+            <thead style="background-color: rgb(84, 138, 200); color:#f8f9fa;">
+                <tr>
+                    <th class="px-4 py-2">Roll No</th>
+                    <th class="px-4 py-2">Date</th>
+                    <th class="px-4 py-2">P1</th>
+                    <th class="px-4 py-2">P2</th>
+                    <th class="px-4 py-2">P3</th>
+                    <th class="px-4 py-2">P4</th>
+                    <th class="px-4 py-2">P5</th>
+                    <th class="px-4 py-2">P6</th>
+                    <th class="px-4 py-2">P7</th>
+                    <th class="px-4 py-2">P8</th>
+                </tr>
+            </thead>
+            <tbody class="text-dark">
+                {% for user in details %}
+                <tr class="hover-bg-gray transition-duration-300">
+                    <td class="border px-4 py-2">{{ user.rollno }}</td>
+                    <td class="border px-4 py-2">{{ user.date }}</td>
+                    <td class="border px-4 py-2">{{ user.p1 }}</td>
+                    <td class="border px-4 py-2">{{ user.p2 }}</td>
+                    <td class="border px-4 py-2">{{ user.p3 }}</td>
+                    <td class="border px-4 py-2">{{ user.p4 }}</td>
+                    <td class="border px-4 py-2">{{ user.p5 }}</td>
+                    <td class="border px-4 py-2">{{ user.p6 }}</td>
+                    <td class="border px-4 py-2">{{ user.p7 }}</td>
+                    <td class="border px-4 py-2">{{ user.p8 }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Bootstrap JS CDN -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <!-- Custom Styles -->
+    <style>
+        /* .bg-gradient {
+            background: linear-gradient(to bottom, #f0f8ff 0%, #f9c969 50%, #bcbdce 100%);
+        } */
+        .hover-bg-gray:hover {
+            background-color: #f8f9fa;
+        }
+        .thead-yellow th {
+            background-color: #FFD700; /* Yellow color */
+            color: #000; /* Black text */
+        }
+    </style>
+</body>
+</html>
